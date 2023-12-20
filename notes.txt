@@ -1,0 +1,39 @@
+DB Fields
+
+
+    Main Booking Form
+first_name (string)
+surname (string)
+contact_number (string)
+email_address (string)
+house_number (string)
+street_name (string)
+city (string)
+postcode (string)
+booking_date (date)
+wheelchair_users (number between 0 and 2)
+smoking (boolean)
+destination (string)
+lunch_arrangements (string)
+notes (string)
+terms_and_conditions (boolean)
+group_leader_policy (boolean)
+bookingMonth (string)
+bookingMonth will be added by server automatically when form is submitted
+
+Mariel(Or Admin) will will have their own page and be able to add if the trip is confirmed (Will also email customer to confirm)
+This will show ALL Booking details
+
+Skipper and crew will have another page where they can volunteer to do trips.
+This will show 
+first_name
+surname
+contact_number
+booking_date
+wheelchair_users
+smoking
+destination
+lunch_arrangements
+notes
+
+
