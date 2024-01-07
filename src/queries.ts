@@ -1,10 +1,8 @@
-import { response } from "express";
-import getMonthNameFromDate from "./utils/dateToMonth"; // get the bookingMonth from the bookingDate
 require('dotenv').config();
+import getMonthNameFromDate from "./utils/dateToMonth"; // get the bookingMonth from the bookingDate
 //src\utils\dateToMonth.tsx
 import { Pool } from 'pg';
 import nodemailer from 'nodemailer'; // Import the nodemailer package
-import { Request, Response } from 'express';
 
 
 const pool = new Pool({
@@ -234,11 +232,36 @@ const getBookingById = async (request, response) => {
     }
 }
 
+const deleteBooking = async (request, response) => {
+    const { bookingId } = request.params;
+
+    
+    
+    try {
+        const result = await pool.query('DELETE FROM bookings WHERE id = $1', [bookingId]); // Use 'await' to wait for the query result
+        console.log("Deleted id", bookingId);
+
+        if (result.rowCount === 0) {
+            // No rows were affected, which means the booking was not found.
+            response.status(404).json({ message: "No booking found with the given ID" });
+            return;
+        }
+
+        console.log("result", result.rows[0]);
+        response.status(200).json({ message: "Booking deleted successfully" });
+        } catch (error) {
+        console.error("Error finding booking:", error);
+        response.status(500).json({ error: "Internal Server Error try again and call Ade if not working" });
+    }
+}
+
+
 module.exports = {
     getAllBookings,
     createBooking,
     getAllDates,
     sendEmail,
     updateBooking,
-    getBookingById
+    getBookingById,
+    deleteBooking
 }; 
