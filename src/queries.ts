@@ -15,8 +15,6 @@ const pool = new Pool({
 
 //Send email to customer
 const sendEmail = async (req, res) => {
-
-
     const formData = req.body;
 
     // Create a transporter object
@@ -28,19 +26,25 @@ const sendEmail = async (req, res) => {
         }
     });
 
-    const customerEmail = formData.email_address; // Use the email address from the form data
+    const customerEmail = formData.email_address;
     const firstName = formData.first_name;
+    const surname = formData.surname;
     const bookingDate = new Date(formData.booking_date).toLocaleString('en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        timeZone: 'GMT', // Set the timezone if needed
+        timeZone: 'GMT',
     });
+    console.log(formData);
 
-    const mailOptions = {
 
-        from: 'adejord@gmail.com', // Replace with your email address
-        to: customerEmail, // Use the customer's email address
+//need to make another site like this to upload without disruption
+
+    
+
+    const mailOptionsToCustomer = {
+        from: 'adejord@gmail.com',
+        to: customerEmail,
         subject: 'Booking Confirmation',
         html: `<p>Hi ${firstName},</p>
         <p>Thank you for booking with us. Your booking is confirmed for ${bookingDate}.</p>
@@ -52,15 +56,23 @@ const sendEmail = async (req, res) => {
         `
     };
 
+    const mailOptionsToAdejord = {
+        from: 'adejord@gmail.com',
+        to: 'adejord@gmail.com',
+        subject: 'New Booking',
+        text: `${firstName} ${surname} has booked a trip on ${bookingDate} to ${formData.destination}.`
+    };
+
     try {
-        const result = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully: ', result);
+        const resultToCustomer = await transporter.sendMail(mailOptionsToCustomer);
+        console.log('Email to customer sent successfully: ', resultToCustomer);
+
+        const resultToAdejord = await transporter.sendMail(mailOptionsToAdejord);
+        console.log('Email to adejord@gmail.com sent successfully: ', resultToAdejord);
     } catch (error) {
         console.error('Error sending email: ', error);
     }
-};
-
-
+}
 
 
 // Get all bookings (For Mariel/Admin to view all bookings)

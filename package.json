@@ -1,4 +1,5 @@
 {
+  
   "name": "tent-server",
   "version": "1.0.0",
   "description": "",
@@ -9,6 +10,8 @@
     "start:prod": "npm run build && node ./dist/src/server.js",
     "build": "npx tsc"
   },
+  "proxy": "http://213.171.209.90:8080",
+
   "keywords": [],
   "author": "",
   "license": "ISC",

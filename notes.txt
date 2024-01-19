@@ -37,3 +37,7 @@ lunch_arrangements
 notes
 
 
+need to 
+chmod 600 /path/to/key.pem
+when uploaded?
+
