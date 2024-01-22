@@ -1,8 +1,8 @@
-const https = require('https');
-const fs = require('fs');
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+import https from 'https';
+import fs from 'fs';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
 // Create an instance of express app
 const app = express();
@@ -11,6 +11,7 @@ const port = 443; // This should be the port your app runs on internally for HTT
 // Define your allowed origins for CORS
 var allowedOrigins = [
   '*', // Allow from anywhere for now
+  'https://tent-admin2.netlify.app',
   'http://localhost:3000',
   'https://tent-admin.netlify.app',
 ];
@@ -47,19 +48,24 @@ app.get('/', (req, res) => {
 });
 app.get('/bookings', db.getAllBookings);
 app.post('/createBooking', db.createBooking);
-app.get('/dates', db.getAllDates);
-app.post('/sendEmail', db.sendEmail);
 app.patch('/updateBooking/:id', db.updateBooking);
 app.get('/bookings/:bookingId', db.getBookingById);
 app.delete('/deleteBooking/:bookingId', db.deleteBooking);
+
+app.post('/sendEmail', db.sendEmail);
+app.get('/dates', db.getAllDates);
+
+app.post('/addVolunteer', db.addVolunteer);
+app.get('/volunteers', db.getAllVolunteers);
 app.get('*', (req, res) => {
+  
   res.status(404).send('404 Not Found. Something is wrong.');
 });
 
-// Load SSL/TLS certificate and private key
-const privateKey = fs.readFileSync('src/privkey.pem', 'utf8');
 
-const certificate = fs.readFileSync('src/fullchain.pem', 'utf8');
+// Load SSL/TLS certificate and private key
+var privateKey = fs.readFileSync('privkey.pem', 'utf8');
+var certificate = fs.readFileSync('fullchain.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 // Create HTTPS server

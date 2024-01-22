@@ -8,7 +8,7 @@ import nodemailer from 'nodemailer'; // Import the nodemailer package
 const pool = new Pool({
     user: "postgres",
     host: "localhost",
-    database: "tent_admin",
+    database: "postgres",
     password: process.env.REACT_APP_DB_PASSWORD,
     port: 5432,
 });
@@ -101,6 +101,7 @@ const createBooking = async (request, response) => {
     const {
         first_name,
         surname,
+        group_name,
         contact_number,
         email_address,
         house_number,
@@ -108,6 +109,7 @@ const createBooking = async (request, response) => {
         city,
         postcode,
         booking_date,
+        total_passengers,
         wheelchair_users,
         smoking,
         destination,
@@ -115,6 +117,7 @@ const createBooking = async (request, response) => {
         notes,
         terms_and_conditions,
         group_leader_policy,
+
     } = request.body;
 
     try {
@@ -123,13 +126,14 @@ const createBooking = async (request, response) => {
 
         const query = `
             INSERT INTO bookings
-            (first_name, surname, contact_number, email_address, house_number, street_name, city, postcode, booking_date, wheelchair_users, smoking, destination, lunch_arrangements, notes, terms_and_conditions, group_leader_policy, bookingMonth)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+            (first_name, surname, group_name, contact_number, email_address, house_number, street_name, city, postcode, booking_date, total_passengers, wheelchair_users, smoking, destination, lunch_arrangements, notes, terms_and_conditions, group_leader_policy, bookingMonth)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
             RETURNING *`;
 
         const values = [
             first_name,
             surname,
+            group_name,
             contact_number,
             email_address,
             house_number,
@@ -137,6 +141,7 @@ const createBooking = async (request, response) => {
             city,
             postcode,
             booking_date,
+            total_passengers,
             wheelchair_users,
             smoking,
             destination,
@@ -162,6 +167,7 @@ const updateBooking = async (request, response) => {
     const {
         first_name,
         surname,
+        group_name,
         contact_number,
         email_address,
         house_number,
@@ -169,6 +175,7 @@ const updateBooking = async (request, response) => {
         city,
         postcode,
         booking_date,
+        total_passengers,
         wheelchair_users,
         smoking,
         destination,
@@ -181,16 +188,17 @@ const updateBooking = async (request, response) => {
     try {
         const myDate = new Date(booking_date);
         const bookingMonth = getMonthNameFromDate(myDate);
-
+        
         const query = `
             UPDATE bookings
-            SET first_name = $1, surname = $2, contact_number = $3, email_address = $4, house_number = $5, street_name = $6, city = $7, postcode = $8, booking_date = $9, wheelchair_users = $10, smoking = $11, destination = $12, lunch_arrangements = $13, notes = $14, terms_and_conditions = $15, group_leader_policy = $16, bookingMonth = $17
-            WHERE id = $18
+            SET first_name = $1, surname = $2, group_name = $3, contact_number = $4, email_address = $5, house_number = $6, street_name = $7, city = $8, postcode = $9, booking_date = $10, total_passengers = $11, wheelchair_users = $12, smoking = $13, destination = $14, lunch_arrangements = $15, notes = $16, terms_and_conditions = $17, group_leader_policy = $18, bookingMonth = $19
+            WHERE id = $20
             RETURNING *`;
 
         const values = [
             first_name,
             surname,
+            group_name,
             contact_number,
             email_address,
             house_number,
@@ -198,6 +206,7 @@ const updateBooking = async (request, response) => {
             city,
             postcode,
             booking_date,
+            total_passengers,
             wheelchair_users,
             smoking,
             destination,
@@ -267,6 +276,60 @@ const deleteBooking = async (request, response) => {
     }
 }
 
+const getAllVolunteers = (request, response) => {
+    pool.query('SELECT * FROM volunteers ORDER BY id ASC', (error, results) => {
+        if (error) {
+            throw error;
+        }
+        response.status(200).json(results.rows);
+    });
+}
+
+const addVolunteer = async (request, response) => {
+    const {
+        first_name,
+        surname,
+        contact_number,
+        email_address,
+        house_number,
+        street_name,
+        city,
+        postcode,
+        role,
+        notes,
+    } = request.body;
+
+    try {
+        const query = `
+            INSERT INTO volunteers
+            (first_name, surname, contact_number, email_address, house_number, street_name, city, postcode, role, notes)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING *`;
+
+        const values = [
+            first_name,
+            surname,
+            contact_number,
+            email_address,
+            house_number,
+            street_name,
+            city,
+            postcode,
+            role,
+            notes,
+        ];
+
+        const result = await pool.query(query, values);
+
+        console.log(`Volunteer added with ID: ${result.rows[0].id}`);
+        response.status(201).json({ message: `Volunteer added with ID: ${result.rows[0].id}` });
+    } catch (error) {
+        console.error("Error creating volunteer:", error);
+        response.status(500).json({ error: "Internal Server Error try again and call Ade if not working" });
+    }
+
+}
+
 
 module.exports = {
     getAllBookings,
@@ -275,5 +338,7 @@ module.exports = {
     sendEmail,
     updateBooking,
     getBookingById,
-    deleteBooking
+    deleteBooking,
+    getAllVolunteers,
+    addVolunteer
 }; 

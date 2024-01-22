@@ -1,5 +1,9 @@
 /node_modules
 .env
 /dist
+cert.pem
+key.pem
+privkey.pem
+fullchain.pem
 
 ARE THERE ANY MORE BEFORE I COMMIT?
