@@ -57,6 +57,9 @@ app.get('/dates', db.getAllDates);
 
 app.post('/addVolunteer', db.addVolunteer);
 app.get('/volunteers', db.getAllVolunteers);
+app.patch('/updateVolunteer/:id', db.updateVolunteer);
+app.delete('/deleteVolunteer/:volunteerId', db.deleteVolunteer);
+app.get('/volunteers/:volunteerId', db.getVolunteerById);
 app.get('*', (req, res) => {
   
   res.status(404).send('404 Not Found. Something is wrong.');
@@ -64,8 +67,10 @@ app.get('*', (req, res) => {
 
 
 // Load SSL/TLS certificate and private key
-var privateKey = fs.readFileSync('privkey.pem', 'utf8');
-var certificate = fs.readFileSync('fullchain.pem', 'utf8');
+// const privateKey = fs.readFileSync('src/privkey.pem', 'utf8');
+// const certificate = fs.readFileSync('src/fullchain.pem', 'utf8');
+const privateKey = fs.readFileSync('privkey.pem', 'utf8');
+const certificate = fs.readFileSync('fullchain.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 // Create HTTPS server
